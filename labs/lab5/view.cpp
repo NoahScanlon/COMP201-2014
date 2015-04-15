@@ -2,7 +2,7 @@
 
 using namespace std;
 
-// Initialize SDL
+
 View::View(string title, int width, int height) {
     fail = false;
     SDL_SetMainReady();
@@ -16,9 +16,9 @@ View::View(string title, int width, int height) {
         fail = true;
         return;
     }
-    // Get the screen
+
     screen = SDL_GetWindowSurface(window);
-    //Initialize JPEG and PNG loading
+
     if( !( IMG_Init( IMG_INIT_JPG|IMG_INIT_PNG ) & (IMG_INIT_JPG|IMG_INIT_PNG) ) ) {
         fail = true;
         return;
@@ -31,54 +31,52 @@ View::~View() {
     SDL_Quit();
 }
 
-/**
- *  Load an image from a file to a SDL_Surface
- */
+
 SDL_Surface* View::load(char * path) {
-    // Load image
+
     SDL_Surface* optimizedSurface = NULL;
     SDL_Surface* loadedSurface = IMG_Load( path );
     if( loadedSurface == NULL ) {
         return NULL;
     }
-    // Convert surface to screen format
+
     optimizedSurface = SDL_ConvertSurface( loadedSurface, screen->format, 0 );
     
-    // Get rid of old loaded surface
+
     SDL_FreeSurface( loadedSurface );
     
     return optimizedSurface;
 }
 
 void View::show(Model * model) {
-
     SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format,
         0x00, 0x00, 0x00));
 
     SDL_Rect dest;
     dest.w = 16;
     dest.h = 16;
-    
-    // TODO: I went all Atari 2600 on you guys. Perhaps you'd like to upgrade
-    // the view with something nice, like a cartoon snake?
-    // HINT: you'd need up, down, left, and right facing assets for:
-    // the snake head, a dead head, the tail, and elbows
-    // HINT: you'd of course need assets for horizontal and vertical snake sections
+   
 
-    // Draw food
+
     dest.x = model->food.x * 16;
     dest.y = model->food.y * 16;
     SDL_FillRect(screen, &dest, SDL_MapRGB(screen->format,
             0x80, 0x00, 0x00));
     
-    // Draw the snake
-    for (std::list<Coordinate>::iterator it=model->snake.begin(); it!=model->snake.end(); it++) {
+
+    for (List<Coordinate>::iterator it=model->snake.begin(); it!=model->snake.end(); it++) {
         dest.x = it->x * 16;
         dest.y = it->y * 16;
         SDL_FillRect(screen, &dest, SDL_MapRGB(screen->format,
         0x00, 0x80, 0x00));
     }
-    
-
+    if (model->gameOver()) {
+		dest.x = 0;
+		dest.y = 0;
+		dest.w = 640;
+		dest.h = 640;
+		SDL_Surface* surface = load("assets/dead.jpg");
+		SDL_BlitSurface( surface, NULL, screen, &dest );
+	}
     SDL_UpdateWindowSurface(window);
 }

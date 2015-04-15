@@ -2,7 +2,6 @@
 
 using namespace std;
 
-// Initialize SDL
 View::View(string title, int width, int height) {
     fail = false;
     SDL_SetMainReady();
@@ -16,14 +15,14 @@ View::View(string title, int width, int height) {
         fail = true;
         return;
     }
-    // Get the screen
+
     screen = SDL_GetWindowSurface(window);
     //Initialize JPEG and PNG loading
     if( !( IMG_Init( IMG_INIT_JPG|IMG_INIT_PNG ) & (IMG_INIT_JPG|IMG_INIT_PNG) ) ) {
         fail = true;
         return;
     }
-    // Load assets
+
     char path[] = "assets/A.png";
     for (char letter = 'A'; letter <= 'Z'; letter++) {
         path[7] = letter;
@@ -42,9 +41,7 @@ View::~View() {
     SDL_Quit();
 }
 
-/**
- *  Load an image from a file to a SDL_Surface
- */
+
 SDL_Surface* View::load(char * path) {
     // Load image
     SDL_Surface* optimizedSurface = NULL;
@@ -52,10 +49,9 @@ SDL_Surface* View::load(char * path) {
     if( loadedSurface == NULL ) {
         return NULL;
     }
-    // Convert surface to screen format
+
     optimizedSurface = SDL_ConvertSurface( loadedSurface, screen->format, 0 );
     
-    // Get rid of old loaded surface
     SDL_FreeSurface( loadedSurface );
     
     return optimizedSurface;
@@ -81,19 +77,3 @@ void View::show(Model * model) {
     SDL_UpdateWindowSurface(window);
 }
 
-/*
-// Show the model, one cell at a time
-void View::show(Model * model) {
-    for (int j = 0; j < model->getWidth(); j++) {
-        cout << "\t" << j;
-    }
-    cout << endl;
-    for (int i = 0; i < model->getHeight(); i++) {
-        cout << i;
-        for (int j = 0; j < model->getWidth(); j++) {
-            cout << "\t" << model->get(i, j);
-        }
-        cout << endl;
-    }
-}
-*/

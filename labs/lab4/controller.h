@@ -4,7 +4,6 @@
 #ifndef _CONTROLLER_H
 #define _CONTROLLER_H
 
-// Handle input
 class Controller {
 public:
     Controller();
